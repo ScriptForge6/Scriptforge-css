@@ -1,0 +1,195 @@
+<!--
+   Copyright 2026 Scriptforge
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <!-- 修复：补充viewport移动端视口标签 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>iOS 风格演示</title>
+  <link id="theme-style" rel="stylesheet" href="Scriptforge-css.light.css">
+  <style>
+    .switchTheme{
+      display: block;
+      margin-left: auto; 
+    }
+    /* 修复：提取全部行内style为工具类，消除 no-inline-styles 警告 */
+    .mt-8 {
+      margin-top: 8px;
+    }
+    .mt-12 {
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- 顶部菜单 -->
+    <nav class="menu menu-top" role="navigation" aria-label="主导航">
+      <ul class="menu-list">
+        <li>
+          <a href="#home" class="menu-link">
+            <span class="icon">🏠</span>
+            <span class="label">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="#explore" class="menu-link">
+            <span class="icon">🔍</span>
+            <span class="label">发现</span>
+          </a>
+        </li>
+        <li>
+          <a href="#messages" class="menu-link">
+            <span class="icon">💬</span>
+            <span class="label">消息</span>
+          </a>
+        </li>
+        <li>
+          <a href="#profile" class="menu-link active">
+            <span class="icon">👤</span>
+            <span class="label">我的</span>
+          </a>
+        </li>
+        <!-- 修复axe/structure警告：ul内部不能直接放div，套入li标签 -->
+        <li class="switchTheme">
+          <button onclick="switchTheme('Scriptforge-css.dark.css')">暗色主题</button>
+          <button onclick="switchTheme('Scriptforge-css.light.css')">亮色主题</button>
+        </li>
+      </ul>
+      
+    </nav>
+
+    <main>
+      <h1 class="card">欢迎使用</h1>
+      
+      <div class="card">
+        <h2>表单示例</h2>
+        <h3>登录</h3>
+        <label for="email">邮箱</label>
+        <input type="email" id="email" placeholder="your@email.com" />
+
+        <label for="password">密码</label>
+        <input type="password" id="password" placeholder="输入密码" />
+
+        <!-- 替换 style="margin-top:8px;" → mt-8 -->
+        <div class="flex gap-4 mt-8">
+          <button onclick="showToast('登录成功！', 'success')">登录</button>
+          <button class="btn-secondary" onclick="showToast('已取消')">取消</button>
+        </div>
+        <div id="status" role="status" class="success"></div>
+        <!-- Toast 提示 -->
+    
+      </div>
+      <div id="toast" class="toast"></div>
+      
+      <div class="card">
+        <h2>卡片列表</h2>
+        <h3>今日任务</h3>
+        <p>完成前端页面设计，优化交互体验。</p>
+        <!-- 替换 style="margin-top:12px;" → mt-12 -->
+        <div class="flex gap-4 mt-12">
+          <button class="btn-success" onclick="showToast('任务已完成', 'success')">✓ 完成</button>
+          <button class="btn-error" onclick="showToast('任务已删除', 'error')">🗑 删除</button>
+        </div>
+        <h3>反馈建议</h3>
+        <textarea placeholder="请输入您的建议..."></textarea>
+        <button onclick="showToast('感谢反馈！', 'success')">提交反馈</button>
+      </div>
+      <div class="card">
+        <h2>卡片列表</h2>
+        <h3>今日任务</h3>
+        <p>完成前端页面设计，优化交互体验。</p>
+        <div class="flex gap-4 mt-12">
+          <button class="btn-success" onclick="showToast('任务已完成', 'success')">✓ 完成</button>
+          <button class="btn-error" onclick="showToast('任务已删除', 'error')">🗑 删除</button>
+        </div>
+        <h3>反馈建议</h3>
+        <textarea placeholder="请输入您的建议..."></textarea>
+        <button onclick="showToast('感谢反馈！', 'success')">提交反馈</button>
+      </div>
+
+      
+      <div class="card">
+        <h2>状态展示</h2>
+        <h3>状态展示</h3>
+        <h4>状态展示</h4>
+        <h5>状态展示</h5>
+        <h6>状态展示</h6>
+        <p class="success">✅ 操作成功：数据已保存</p>
+        <!-- 替换行内margin-top:8px为mt-8类 -->
+        <p class="error mt-8">❌ 操作失败：网络连接超时</p>
+      </div>
+    </main>
+
+    <!-- 底部菜单 -->
+    <nav class="menu menu-bottom" role="navigation" aria-label="底部导航">
+      <ul class="menu-list">
+        <li>
+          <a href="#home" class="menu-link">
+            <span class="icon">🏠</span>
+            <span class="label">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="#explore" class="menu-link">
+            <span class="icon">🔍</span>
+            <span class="label">发现</span>
+          </a>
+        </li>
+        <li>
+          <a href="#messages" class="menu-link">
+            <span class="icon">💬</span>
+            <span class="label">消息</span>
+          </a>
+        </li>
+        <li>
+          <a href="#profile" class="menu-link">
+            <span class="icon">👤</span>
+            <span class="label">我的</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    
+  </div>
+  <script src="Scriptforge-js.js"></script>
+  <script>
+    resetCardReveal()
+    revealCardsSequentially(100);
+
+    function showToast(message, type) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+
+      const status = document.getElementById('status');
+      if (status && type) {
+        status.textContent = message;
+        status.className = type === 'success' ? 'success' : 'error';
+      }
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+    
+  </script>
+</body>
+</html>
