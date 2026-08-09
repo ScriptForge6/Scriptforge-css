@@ -77,9 +77,10 @@
 
     <main>
       <h1 class="card">欢迎使用</h1>
-      
+
       <div class="card">
-        <h2>表单示例</h2>
+      <h2>表单示例</h2>
+      <div class="card visible">
         <h3>登录</h3>
         <label for="email">邮箱</label>
         <input type="email" id="email" placeholder="your@email.com" />
@@ -97,9 +98,10 @@
     
       </div>
       <div id="toast" class="toast"></div>
-      
+
       <div class="card">
-        <h2>卡片列表</h2>
+      <h2>卡片列表</h2>
+      <div class="card visible">
         <h3>今日任务</h3>
         <p>完成前端页面设计，优化交互体验。</p>
         <!-- 替换 style="margin-top:12px;" → mt-12 -->
@@ -118,7 +120,9 @@
         <div class="flex gap-4 mt-12">
           <button class="btn-success" onclick="showToast('任务已完成', 'success')">✓ 完成</button>
           <button class="btn-error" onclick="showToast('任务已删除', 'error')">🗑 删除</button>
-        </div>
+      </div>
+
+      <div class="card visible">
         <h3>反馈建议</h3>
         <textarea placeholder="请输入您的建议..."></textarea>
         <button onclick="showToast('感谢反馈！', 'success')">提交反馈</button>
@@ -126,7 +130,7 @@
 
       
       <div class="card">
-        <h2>状态展示</h2>
+      <h2>状态展示</h2>
         <h3>状态展示</h3>
         <h4>状态展示</h4>
         <h5>状态展示</h5>
@@ -174,6 +178,7 @@
     resetCardReveal()
     revealCardsSequentially(100);
 
+  <script>
     function showToast(message, type) {
       const toast = document.getElementById('toast');
       toast.textContent = message;
@@ -189,7 +194,15 @@
         toast.classList.remove('show');
       }, 2500);
     }
-    
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const cards = document.querySelectorAll('.card');
+      cards.forEach((card, index) => {
+        setTimeout(() => {
+          card.classList.add('visible');
+        }, index * 100);
+      });
+    });
   </script>
 </body>
 </html>
