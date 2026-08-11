@@ -37,3 +37,86 @@ function switchTheme(themeCssPath) {
   const link = document.getElementById('theme-style');
   link.href = themeCssPath;
 }
+
+/**
+ * 菜单
+ * 可以用pos="top"或者pos="bottom"定义位置
+ */
+class SFMenu extends HTMLElement {
+  constructor() {
+    super();
+
+    // 创建 Shadow DOM（隔离样式和结构）
+    const shadow = this.attachShadow({ mode: 'open' });
+
+    // 定义模板结构（允许用户插入内容）
+    const template = document.createElement('template');
+    template.innerHTML = `
+<link id="theme-style" rel="stylesheet" href="Scriptforge-css.css">
+  <nav class="menu" role="navigation">
+    <ul class="menu-list">
+      <slot></slot>
+    </ul>
+  </nav>
+`;
+
+    // 将模板内容插入 Shadow DOM
+    shadow.appendChild(template.content.cloneNode(true));
+  }
+}
+customElements.define('sf-menu', SFMenu);
+
+function changeTheme() {
+  const toggleButton = document.getElementById('toggle-theme');
+  const body = document.body;
+
+  // 切换主题
+  toggleButton.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+  });
+}
+
+
+
+/**
+ * toast
+ */
+class SFToast extends HTMLElement {
+  constructor() {
+    super();
+
+    // 创建 Shadow DOM
+    const shadow = this.attachShadow({ mode: 'open' });
+
+    // 定义模板结构
+    const template = document.createElement('template');
+    template.innerHTML = `
+<link id="theme-style" rel="stylesheet" href="Scriptforge-css.css">
+<div id="toast" class="toast"></div>
+`;
+
+    shadow.appendChild(template.content.cloneNode(true));
+  }
+
+
+  showToast(message, time = 2500) {
+    const toast = this.shadowRoot.getElementById('toast');
+    toast.textContent = message;
+
+
+    // 显示 toast
+    toast.classList.add('show');
+
+    // 2.5 秒后隐藏
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        toast.textContent = "";
+      }, 100);
+    }, time);
+    
+
+  }
+}
+
+customElements.define('sf-toast', SFToast);
