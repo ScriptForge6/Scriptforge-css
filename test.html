@@ -70,7 +70,11 @@
       </li>
       <!-- 修复axe/structure警告：ul内部不能直接放div，套入li标签 -->
       <li class="switchTheme">
-        <button id="toggle-theme">切换主题</button>
+        <div>
+        <button id="toggle-theme" class="toggle-btn icon" aria-pressed="false"></button>
+        <span class="label">切换主题</span>
+        </div>
+        
       </li>
     </sf-menu>
     
@@ -170,6 +174,14 @@
     resetCardReveal();
     revealCardsSequentially(50);
     changeTheme();
+
+    const toggleBtn = document.querySelector('.toggle-btn');
+toggleBtn.addEventListener('click', () => {
+  toggleBtn.classList.toggle('on');
+  const isOn = toggleBtn.classList.contains('on');
+  toggleBtn.setAttribute('aria-pressed', isOn);
+  console.log('isOn', isOn);
+});
 
   </script>
 </body>

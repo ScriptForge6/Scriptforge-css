@@ -15,6 +15,9 @@
 
 */
 :root{
+  /* 可修改 */
+  --toggle-width: 60px;
+
   /* 字体 */
   --font-family: "Microsoft Yahei", "Segoe UI", Roboto, "PingFang SC", "Noto Sans SC", sans-serif;
 
@@ -41,6 +44,10 @@
   --bg-btn-scs-hover: #2da848;
   --bg-error: #ff3b30;
   --bg-btn-err-hover: #e02e24;
+  --toggle-bg-off: #cccccc;
+  --toggle-bg-on: #2563eb;
+  --toggle-thumb-bg: #ffffff;
+  --toggle-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   --bg-form-color: rgba(255, 255, 255, 0.95);
   --form-color: #1c1c1e;
   --form-placeholder-color: rgba(0, 0, 0, 0.3);
@@ -58,6 +65,7 @@
   --shadow-focus: 0 0 0 3px var(--border-focus);
 
   /* 间距与圆角 */
+  --toggle-gap: 2px;
   --spacing: 8px;
   --radius: 12px;
   --radius-card: 12px;
@@ -65,12 +73,18 @@
 
   /* 动画 */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --toggle-duration: 300ms;
+  --toggle-focus-outline: 2px solid #2563eb;
   --duration-fast: 150ms;
   --duration-medium: 300ms;
   --duration-slow: 500ms;
 
   /* 特效 */
   --acrylic-blur: blur(20px) saturate(180%);
+
+  /* toggle */
+  --toggle-height: calc( var(--toggle-width) / 2 );
+  --toggle-thumb-size: calc( var(--toggle-height) - 4px );
 }
 
 .dark-mode {
@@ -100,6 +114,10 @@
   --bg-btn-scs-hover: #2da848;
   --bg-error: #ff3b30;
   --bg-btn-err-hover: #e02e24;
+  --toggle-bg-off: #cccccc;
+  --toggle-bg-on: #2563eb;
+  --toggle-thumb-bg: #ffffff;
+  --toggle-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   --bg-form-color: #292929;
   --form-color: #1c1c1e;
   --form-placeholder-color: rgba(255, 255, 255, 0.3);
@@ -470,9 +488,56 @@ button,
   }
 }
 
-/* ================================
-   状态提示
-   ================================ */
+.toggle-btn {
+  position: relative;
+  width: var(--toggle-width);
+  height: var(--toggle-height);
+
+  display: block;
+  border: none;
+  padding: 0;
+  border-radius: 9999px;
+  cursor: pointer;
+
+  background-color: var(--toggle-bg-off);
+  transition: background-color var(--toggle-duration) ease;
+}
+
+/* 滑块伪元素 */
+.toggle-btn::after {
+  content: "";
+  position: absolute;
+  top: var(--toggle-gap);
+  left: var(--toggle-gap);
+
+  width: var(--toggle-thumb-size);
+  height: var(--toggle-thumb-size);
+  border-radius: 50%;
+
+  background-color: var(--toggle-thumb-bg);
+  box-shadow: var(--toggle-shadow);
+
+  transition: transform var(--toggle-duration) ease;
+}
+
+/* 开启状态 */
+.toggle-btn.on {
+  background-color: var(--toggle-bg-on);
+}
+.toggle-btn.on::after {
+  /* 向右位移：总宽度 - 滑块大小 - 左边间隙 */
+  transform: translateX(calc(var(--toggle-width) - var(--toggle-thumb-size) - var(--toggle-gap)*2));
+}
+
+/* 焦点样式，保留键盘tab访问 */
+.toggle-btn:focus-visible {
+  outline: var(--toggle-focus-outline);
+  outline-offset: 2px;
+}
+
+/* 
+ 状态提示
+*/
 .success {
   color: var(--bg-success);
   white-space: pre-wrap;
@@ -506,9 +571,9 @@ button,
   
 }
 
-/* ================================
-   无障碍
-   ================================ */
+/*
+ 无障碍
+ */
 [role="status"] {
   min-height: 1.2em;
   margin-top: 8px;
@@ -526,9 +591,9 @@ button,
   border: 0;
 }
 
-/* ================================
-   减少动画（无障碍）
-   ================================ */
+/*
+ 减少动画（无障碍）
+*/
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -574,4 +639,14 @@ button,
 p,
 .p{
   color: var(--p-color);
+}
+
+/*
+ sf-menu
+*/
+sf-menu {
+    position: sticky;
+    top: 0;
+    z-index: 100%;
+    display: block;
 }
