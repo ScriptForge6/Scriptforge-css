@@ -1,5 +1,7 @@
 // @charset "UTF-8";
 
+/**<CSSPATH_START>**/const cssFilePath = "Scriptforge-css.css";/**<CSSPATH_END>**/
+
 /**
  * 卡片序列依次入场动画
  * @param {number} [time=120] 两张卡片之间间隔毫秒
@@ -54,7 +56,7 @@ class SFMenu extends HTMLElement {
     // 定义模板结构（允许用户插入内容）
     const template = document.createElement('template');
     template.innerHTML = `
-<link id="theme-style" rel="stylesheet" href="Scriptforge-css.css">
+<link id="theme-style" rel="stylesheet" href="${cssFilePath}">
   <nav class="menu" role="navigation">
             <div class="menu-inner">
               <ul class="menu-list">
@@ -98,7 +100,7 @@ class SFToast extends HTMLElement {
     // 定义模板结构
     const template = document.createElement('template');
     template.innerHTML = `
-<link id="theme-style" rel="stylesheet" href="Scriptforge-css.css">
+<link id="theme-style" rel="stylesheet" href="${cssFilePath}">
 <div id="toast" class="toast"></div>
 `;
 
