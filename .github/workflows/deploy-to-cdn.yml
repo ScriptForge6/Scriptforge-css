@@ -51,6 +51,7 @@ jobs:
 
       - name: Copy processed static files into cdn repo
         run: |
+          mkdir -p ./cdn
           # 把deploy目录（你处理好的文件）全部复制进cdn仓库
           cp -r ./deploy/* ./cdn/
       
