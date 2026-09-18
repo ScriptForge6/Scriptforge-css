@@ -55,7 +55,7 @@ jobs:
           ref: main
           token: ${{ secrets.PAT_KEY }}
           path: cdn
-          persist-credentials: false
+          persist-credentials: true
 
       - name: Copy processed static files into cdn repo
         run: |
