@@ -1,0 +1,13 @@
+# This file is for Cloudflare Pages
+
+# JS强制utf8编码
+*.js
+  Content-Type: application/javascript; charset=utf-8
+
+# CSS强制utf8编码
+*.css
+  Content-Type: text/css; charset=utf-8
+
+# 允许跨域加载资源
+/*
+  Access-Control-Allow-Origin: *
