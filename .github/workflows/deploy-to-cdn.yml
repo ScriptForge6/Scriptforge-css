@@ -48,28 +48,30 @@ jobs:
 
           [System.IO.File]::WriteAllText($NewJSFilePath, $newJs, [System.Text.Encoding]::UTF8)
           Write-Host "✅ Scriptforge-js.js 已更新完成"
-      - name: Checkout target CDN repo (cdn)
-        uses: actions/checkout@v4
-        with:
-          repository: ScriptForge666/scriptforge-css-cdn
-          ref: main
-          token: ${{ secrets.PAT_KEY }}
-          path: cdn
-          persist-credentials: false
-
+          
       - name: Copy processed static files into cdn repo
         run: |
           # 清空cdn仓库原有全部文件
           rm -rf ./cdn/*
           # 把deploy目录（你处理好的文件）全部复制进cdn仓库
           cp -r ./deploy/* ./cdn/
-
-      - name: Commit & Push to cdn repo
-        uses: stefanzweifel/git-auto-commit-action@v5
+      
+      - name: Generate GitHub App token
+        id: get-app-token
+        uses: actions/create-github-app-token@v3
         with:
-          repository: ./cdn
-          commit_message: "build: auto deploy static assets from source repo ${{ github.sha }}"
-          branch: main
-          commit_author: ScriptForge666 <221077483+ScriptForge666@users.noreply.github.com>
-
+          client-id: ${{ vars.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+      
+      - name: Push to CDN repository
+        env:
+          GH_TOKEN: ${{ steps.get-app-token.outputs.token }}
+        run: |
+          git config --global user.name "ScriptForge6-CDN-Deploy-Bot"
+          git config --global user.email "bot@scriptforge6.invalid"
+          git remote remove cdn || true
+          git remote add cdn https://x-access-token:${GH_TOKEN}@github.com/ScriptForge6/scriptforge-css-cdn.git
+          git add .
+          git commit -m "Auto deploy from Scriptforge-css source" || true
+          git push cdn main
 
