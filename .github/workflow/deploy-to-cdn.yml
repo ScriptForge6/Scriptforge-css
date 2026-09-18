@@ -1,0 +1,75 @@
+name: deploy-to-cdn
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Match and replace CSS file URL
+        shell: pwsh
+        run: | 
+          $ScriptforgeJsPath = "Scriptforge-js.js"
+          $ScriptforgeCssPath = "Scriptforge-css.css"
+          $ScriptforgeJsContent = Get-Content $ScriptforgeJsPath -Raw -Encoding utf8
+          $OutputDir = "./deploy"
+          $NewJSFilePath = Join-Path $OutputDir "Scriptforge-js.js"
+          $NewCSSFilePath = Join-Path $OutputDir "Scriptforge-css.css"
+          $regex = '(?s)(/\*\*<CSSPATH_START>\*\*/).*?(/\*\*<CSSPATH_END>\*\*/)'
+
+          if (-not (Test-Path $ScriptforgeJsPath)) {
+              Write-Error "❌ 源文件 $ScriptforgeJsPath 不存在"
+              exit 1
+          }
+          if (-not (Test-Path $ScriptforgeCssPath)) {
+              Write-Error "❌ 源文件 $ScriptforgeCssPath 不存在"
+              exit 1
+          }
+
+          New-Item -ItemType Directory -Force -Path $OutputDir | Out-Null
+
+          # 复制 CSS 文件到输出目录
+          Copy-Item -Path $ScriptforgeCssPath -Destination $NewCSSFilePath -Force
+
+          if (-not ($ScriptforgeJsContent -match $regex)) {
+             Write-Error "❌ Scriptforge-js.js 未找到 /**<CSSPATH_START>**/ / /**<CSSPATH_END>**/ 成对标记，终止执行"
+             exit 1
+          }
+
+          $newLineContent = 'const cssFilePath = "https://cdn.script-forge.top/Scriptforge-css.css";'
+          $replaceTemplate = '${1}' + $newLineContent + '${2}'
+          $newJs = $ScriptforgeJsContent -replace $regex, $replaceTemplate
+
+          [System.IO.File]::WriteAllText($NewJSFilePath, $newJs, [System.Text.Encoding]::UTF8)
+          Write-Host "✅ Scriptforge-js.js 已更新完成"
+      - name: Checkout target CDN repo (cdn)
+        uses: actions/checkout@v4
+        with:
+          repository: ScriptForge6/scriptforge-css-cdn
+          ref: main
+          token: ${{ secrets.PAT_KEY }}
+          path: cdn
+          persist-credentials: false
+
+      - name: Copy processed static files into cdn repo
+        run: |
+          # 清空cdn仓库原有全部文件
+          rm -rf ./cdn/*
+          # 把deploy目录（你处理好的文件）全部复制进cdn仓库
+          cp -r ./deploy/* ./cdn/
+
+      - name: Commit & Push to cdn repo
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          repository: ./cdn
+          commit_message: "build: auto deploy static assets from source repo ${{ github.sha }}"
+          branch: main
+          commit_author: ScriptForge666 <221077483+ScriptForge666@users.noreply.github.com>
+
+
