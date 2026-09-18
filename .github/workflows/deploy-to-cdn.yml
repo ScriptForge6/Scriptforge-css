@@ -72,5 +72,4 @@ jobs:
           git remote add cdn https://x-access-token:${GH_TOKEN}@github.com/ScriptForge6/scriptforge-css-cdn.git
           git add .
           git commit -m "Auto deploy from Scriptforge-css source" || true
-          git push cdn main
-
+          git push cdn master:main
