@@ -1,3 +1,5 @@
+// @charset "UTF-8";
+
 /**
  * 卡片序列依次入场动画
  * @param {number} [time=120] 两张卡片之间间隔毫秒
