@@ -55,6 +55,13 @@ jobs:
           # 把deploy目录（你处理好的文件）全部复制进cdn仓库
           cp -r ./deploy/* ./cdn/
       
+      - name: Debug token permission
+        env:
+          GH_TOKEN: ${{ steps.get-app-token.outputs.token }}
+        run: |
+          curl -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github.v3+json" https://api.github.com/installation/repositories
+
+
       - name: Generate GitHub App token
         id: get-app-token
         uses: actions/create-github-app-token@v3
