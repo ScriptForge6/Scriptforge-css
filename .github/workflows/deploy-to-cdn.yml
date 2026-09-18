@@ -48,11 +48,9 @@ jobs:
 
           [System.IO.File]::WriteAllText($NewJSFilePath, $newJs, [System.Text.Encoding]::UTF8)
           Write-Host "✅ Scriptforge-js.js 已更新完成"
-          
+
       - name: Copy processed static files into cdn repo
         run: |
-          # 清空cdn仓库原有全部文件
-          rm -rf ./cdn/*
           # 把deploy目录（你处理好的文件）全部复制进cdn仓库
           cp -r ./deploy/* ./cdn/
       
