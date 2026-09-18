@@ -56,10 +56,15 @@ class SFMenu extends HTMLElement {
     template.innerHTML = `
 <link id="theme-style" rel="stylesheet" href="Scriptforge-css.css">
   <nav class="menu" role="navigation">
-    <ul class="menu-list">
-      <slot></slot>
-    </ul>
-  </nav>
+            <div class="menu-inner">
+              <ul class="menu-list">
+                <slot></slot>
+              </ul>
+              <div class="sf-menu-right">
+              <slot name="right"></slot>
+              </div>
+            </div>
+          </nav>
 `;
 
     // 将模板内容插入 Shadow DOM
