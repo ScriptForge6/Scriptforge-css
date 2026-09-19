@@ -51,25 +51,37 @@ jobs:
       
       - name: Generate GitHub App token
         id: get-app-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@v1
         with:
-          client-id: ${{ vars.APP_CLIENT_ID }}
+          app-id: ${{ vars.APP_CLIENT_ID }}          # 注意：这里要放 App ID
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           repositories: scriptforge-css-cdn
+
+      # ④ 关键新增：用 token 把 CDN 仓库拉到 ./cdn
+      - name: Checkout CDN repo
+        uses: actions/checkout@v4
+        with:
+          repository: ScriptForge6/scriptforge-css-cdn
+          ref: main
+          token: ${{ steps.get-app-token.outputs.token }}
           path: cdn
 
+      # ⑤ 此时 ./cdn 已存在，复制即可
       - name: Copy processed static files into cdn repo
         run: |
           rm -rf ./cdn/*
-          # 把deploy目录（你处理好的文件）全部复制进cdn仓库
           cp -r ./deploy/* ./cdn/
-          
+
+      # ⑥ 调试权限（确认没问题后可删）
       - name: Debug token permission
         env:
           GH_TOKEN: ${{ steps.get-app-token.outputs.token }}
         run: |
-          curl -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github.v3+json" https://api.github.com/installation/repositories
+          curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/installation/repositories | grep -E '"full_name"|"total_count"'
 
+      # ⑦ 提交推送
       - name: Commit and push
         working-directory: cdn
         run: |
