@@ -61,6 +61,7 @@ jobs:
         with:
           client-id: ${{ vars.APP_CLIENT_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          repositories: scriptforge-css-cdn
       
       - name: Debug token permission
         env:
