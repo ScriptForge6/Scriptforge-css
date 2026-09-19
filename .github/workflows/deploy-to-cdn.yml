@@ -48,13 +48,7 @@ jobs:
 
           [System.IO.File]::WriteAllText($NewJSFilePath, $newJs, [System.Text.Encoding]::UTF8)
           Write-Host "✅ Scriptforge-js.js 已更新完成"
-
-      - name: Copy processed static files into cdn repo
-        run: |
-          mkdir -p ./cdn
-          # 把deploy目录（你处理好的文件）全部复制进cdn仓库
-          cp -r ./deploy/* ./cdn/
-
+      
       - name: Generate GitHub App token
         id: get-app-token
         uses: actions/create-github-app-token@v3
@@ -62,21 +56,30 @@ jobs:
           client-id: ${{ vars.APP_CLIENT_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           repositories: scriptforge-css-cdn
-      
+          path: cdn
+
+      - name: Copy processed static files into cdn repo
+        run: |
+          rm -rf ./cdn/*
+          # 把deploy目录（你处理好的文件）全部复制进cdn仓库
+          cp -r ./deploy/* ./cdn/
+          
       - name: Debug token permission
         env:
           GH_TOKEN: ${{ steps.get-app-token.outputs.token }}
         run: |
           curl -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github.v3+json" https://api.github.com/installation/repositories
 
-      - name: Push to CDN repository
-        env:
-          GH_TOKEN: ${{ steps.get-app-token.outputs.token }}
+      - name: Commit and push
+        working-directory: cdn
         run: |
-          git config --global user.name "ScriptForge6-CDN-Deploy-Bot"
-          git config --global user.email "bot@scriptforge6.invalid"
-          git remote remove cdn || true
-          git remote add cdn https://x-access-token:${GH_TOKEN}@github.com/ScriptForge6/scriptforge-css-cdn.git
-          git add .
-          git commit -m "Auto deploy from Scriptforge-css source" || true
-          git push cdn master:main
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff-index --quiet HEAD; then
+            echo "🟡 No changes, skip publishing."
+            exit 0
+          fi
+          git commit -m "chore: publish from Scriptforge-css@${GITHUB_SHA::7}"
+          git push origin main
+          echo "✅ Published to CDN repo."
